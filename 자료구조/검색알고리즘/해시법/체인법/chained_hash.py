@@ -2,7 +2,6 @@
 해시법을 사용하는데 해시 충돌이 일어나는 경우 ->  체인법(오픈 해시법) 으로 해결 
 '''
 from __future__ import annotations
-from re import A
 from typing import Any, Type
 import hashlib
 
@@ -78,4 +77,15 @@ class ChainedHash:
             pp=p
             p=p.next
         return False
+
+
+    def dump(self)->None:
+
+        for i in range(self.capcity):
+            p=self.table[i]
+            print(i,end='')
+            while p is not None:
+                print(f' -> {p.Key} ({p.Value})',end='')
+                p=p.next
+            print()
                     
