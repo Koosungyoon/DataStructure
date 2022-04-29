@@ -1,0 +1,94 @@
+from __future__ import annotations
+from typing import Any,Type
+from enum import Enum
+import hashlib
+
+class Status(Enum):
+    OCCUPIED=0
+    EMPTY=1
+    DELETE=2
+class Bucket:
+    #해시를 구성하는 버킷
+    def __init__(self,key:Any=None,value:Any=None,stat:Status=Status.EMPTY)->None:
+        #초기화
+        self.key=key
+        self.value=value
+        self.stat=stat
+
+    def set(self, key:Any,value:Any,stat:Status)->None:
+        self.key=key
+        self.value=value
+        self.stat=stat
+
+    def set_status(self,stat:Status)->None:
+        self.stat=stat
+
+    
+class Openhash:
+    #open_hash로 구현하는 해시클래스
+
+    def __init__(self,capacity:int)->None:
+        self.capacity=capacity
+        self.table=[Bucket()]*self.capacity
+
+    def hash_value(self,Key:Any)->int:
+        if isinstance(Key,int): #정수이면 -> 나눠서 해쉬값 리턴
+            return Key%self.capcity
+        return (int(hashlib.md5(str(Key).encode()).hexdigest(),16)%self.capcity)
+    
+    def rehash_value(self,key:Any)->int:
+        #재해시값을 구함
+        return(self.hash_value(key)+1)%self.capacity
+
+    def search_node(self,key:Any)->Any:
+        hash=self.hash_value(key)
+        p=self.table[hash]
+
+        for i in range(self.capacity):
+            if p.stat==Status.EMPTY:
+                break
+            elif p.stat==Status.OCCUPIED and p.key==key:
+                return p
+            hash=self.rehash_value(hash)
+            p=self.table[hash]
+        return None
+    def search(self,key:Any)->Any:
+        p=self.search_node(key)
+        if p is not None:
+            return p.value
+        else:
+            return None
+
+    def add(self,key:Any,value:Any)->bool:
+        if self.search(key) is not None:
+            return False
+        hash=self.hash_value(key)
+        p=self.table[hash]
+
+        for i in range(self.capacity):
+            if p.stat==Status.DELETE or p.stat==Status.EMPTY:
+                self.table[hash]=Bucket(key,value,Status.OCCUPIED)
+                return True
+            hash=self.rehash_value(hash)
+            p=self.table[hash]
+
+        return False
+
+    def remove(self,key:Any)->bool:
+        p=self.search(key)
+        if p is None:
+            return False
+        p.set_status(Status.DELETE)
+        return True
+    
+    def dump(self)->None:
+        for i in range(self.capacity):
+            print(f'{i:2}',end='')
+            if self.tabel[i].stat==Status.OCCUPIED:
+                print(f'{self.table[i].key},({self.table[i].value})')
+            elif self.table[i].stat==Status.DELETE:
+                print('---delete---')
+            else:
+                print('---empty---')
+                
+
