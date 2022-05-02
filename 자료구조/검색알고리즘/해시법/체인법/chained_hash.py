@@ -51,7 +51,7 @@ class ChainedHash:
         while p is not None:
             if p.Key==Key:
                 return False #이미 존재하는 값을 추가하므로 실패 임 
-            p=p.next
+            p=p.Next
         
         temp = Node(Key,Value,self.table[hash])
         self.table[hash]= temp
