@@ -84,7 +84,7 @@ class Openhash:
     
     def dump(self)->None:
         for i in range(self.capacity):
-            print(f'{i:2}',end='')
+            print(f'{i:2}',end=' ')
             if self.table[i].stat==Status.OCCUPIED:
                 print(f'{self.table[i].key} ({self.table[i].value})')
             elif self.table[i].stat==Status.DELETE:
